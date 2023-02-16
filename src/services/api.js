@@ -1,10 +1,9 @@
 import axios from "axios";
+import {BASE_URL, COUNTRIES, STATES} from "./paths"
 
 export const getCountryData = async () => {
     try {
-      const resp = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts?_page=1&_limit=5"
-      );
+      const resp = await axios.get(`${BASE_URL}${COUNTRIES}`);
       return resp;
     } catch (error) {
       console.log(error.message);
@@ -13,9 +12,7 @@ export const getCountryData = async () => {
 
 export const getStateData = async () => {
 try {
-    const resp = await axios.get(
-    "https://jsonplaceholder.typicode.com/posts?_page=1&_limit=5"
-    );
+    const resp = await axios.get(`${BASE_URL}${STATES}`);
     return resp;
 } catch (error) {
     console.log(error.message);

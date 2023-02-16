@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, Select, MenuItem  } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { validateEmail } from '../../helpers/validations';
 import { getCountryData, getStateData } from '../../services/api';
 import TextFieldBox from '../../components/TextFieldBox';
-import Dropdown from "../../components/Dropdown";
 import "../../App.css";
 
 const Form = () => {
@@ -15,8 +14,8 @@ const Form = () => {
     const [dob, setDob] = useState("0");
     const [contact, setContact] = useState("");
     const [email, setEmail] = useState("");
-    const [country, setCountry] = useState("");
-    const [state, setState] = useState("");
+    const [country, setCountry] = useState({id: -1, country: ""});
+    const [state, setState] = useState({id: -1, countryId: -1, state: ""});
     const [countries, setCountries] = useState([]);
     const [stateList, setStateList] = useState([]);
   
@@ -37,7 +36,10 @@ const Form = () => {
       if (contact.length < 10) {
         err["Contact"] = {"error": "Length should be 10"};
       }
-  
+      else if (!/^\d+$/.test(contact)) {
+        err["Contact"] = {"error": "Contact should contains only digits"};
+      }
+
       if(Object.keys(err).length === 0){
         err["Success"] = "All fields are valid";
       }
@@ -101,14 +103,34 @@ const Form = () => {
                 className="form-field"
               >
                 <div className="textholder">Country</div>
-                <Dropdown value={country} setValue={setCountry} data={countries} />
+                <Select
+                    className="dropdown-container"
+                    value={country.country}
+                    onChange={e => setCountry(countries.find((item) => item.country === e.target.value))}
+                >
+                    {countries.map((item) => {
+                        return(
+                          <MenuItem key={item.id} value={item.country}>{item.country}</MenuItem>  
+                        )
+                    })}
+                </Select>
               </Grid>
               <Grid
                 xs={12}
                 className="form-field"
               >
                 <div className="textholder">State</div>
-                <Dropdown value={state} setValue={setState} data={stateList} />
+                <Select
+                    className="dropdown-container"
+                    value={state.state}
+                    onChange={e => setState(stateList.find((item) => item.state === e.target.value))}
+                >
+                    {stateList.filter((item) => item.countryId === country.id).map((item) => {
+                        return(
+                          <MenuItem key={item.id} value={item.state}>{item.state}</MenuItem>  
+                        )
+                    })}
+                </Select>
               </Grid>
               <Grid
                 xs={12}
